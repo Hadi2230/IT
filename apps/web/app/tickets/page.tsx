@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { fetchJson } from "@/lib/api";
+import Link from "next/link";
+import { SkeletonList } from "@/components/Skeleton";
 
 type Ticket = {
   id: string;
@@ -48,10 +50,10 @@ export default function TicketsPage() {
             <option value="RESOLVED">RESOLVED</option>
             <option value="CLOSED">CLOSED</option>
           </select>
-          <a href="/tickets/new" className="px-3 py-2 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">New Ticket</a>
+          <Link href="/tickets/new" className="px-3 py-2 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">New Ticket</Link>
         </div>
       </div>
-      {loading ? <div>Loading...</div> : null}
+      {loading ? <SkeletonList /> : null}
       {error ? <div className="text-red-600 text-sm">{error}</div> : null}
       <div className="grid gap-3">
         {slice.map((t) => (

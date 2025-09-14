@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { fetchJson } from "@/lib/api";
+import Link from "next/link";
+import { SkeletonList } from "@/components/Skeleton";
 
 type License = {
   id: string;
@@ -41,10 +43,10 @@ export default function LicensesPage() {
         <h1 className="text-xl font-semibold">Licenses</h1>
         <div className="flex items-center gap-2">
           <input placeholder="Search product/vendor" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} className="px-3 py-2 rounded-md border bg-transparent" />
-          <a href="/licenses/new" className="px-3 py-2 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">New License</a>
+          <Link href="/licenses/new" className="px-3 py-2 rounded-md bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">New License</Link>
         </div>
       </div>
-      {loading ? <div>Loading...</div> : null}
+      {loading ? <SkeletonList /> : null}
       {error ? <div className="text-red-600 text-sm">{error}</div> : null}
       <div className="grid gap-3">
         {slice.map((l) => (
