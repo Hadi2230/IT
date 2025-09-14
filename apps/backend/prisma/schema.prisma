@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  IT_AGENT
+  EMPLOYEE
+}
+
+enum TicketPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  PENDING_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  fullName      String
+  email         String   @unique
+  phone         String?
+  department    String?
+  title         String?
+  role          UserRole @default(EMPLOYEE)
+  passwordHash  String
+  isActive      Boolean  @default(true)
+  tickets       Ticket[] @relation("TicketRequester")
+  assigned      Ticket[] @relation("TicketAssignee")
+  messages      Message[]
+  assets        AssetAssignment[]
+  tasks         WorkLog[]
+  auditLogs     AuditLog[]
+}
+
+model Ticket {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  title         String
+  description   String
+  category      String
+  priority      TicketPriority @default(MEDIUM)
+  status        TicketStatus   @default(OPEN)
+  requesterId   String
+  requester     User          @relation("TicketRequester", fields: [requesterId], references: [id])
+  assigneeId    String?
+  assignee      User?         @relation("TicketAssignee", fields: [assigneeId], references: [id])
+  messages      Message[]
+  attachments   Attachment[]
+  feedback      Feedback?
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  attachments Attachment[]
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  filename   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  ticketId   String?
+  ticket     Ticket?  @relation(fields: [ticketId], references: [id])
+  messageId  String?
+  message    Message? @relation(fields: [messageId], references: [id])
+}
+
+model Asset {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tag          String   @unique
+  type         String   // laptop, monitor, phone, printer, network, license, etc
+  model        String?
+  serialNumber String?
+  status       String   @default("in_stock")
+  location     String?
+  notes        String?
+  assignments  AssetAssignment[]
+  serviceLogs  ServiceLog[]
+  licenses     SoftwareLicense[]
+}
+
+model AssetAssignment {
+  id         String   @id @default(cuid())
+  assignedAt DateTime @default(now())
+  returnedAt DateTime?
+  assetId    String
+  asset      Asset    @relation(fields: [assetId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model ServiceLog {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  assetId     String
+  asset       Asset    @relation(fields: [assetId], references: [id])
+  title       String
+  description String
+  performedBy String   // IT agent id or name
+  cost        Float?
+}
+
+model SoftwareLicense {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  product       String
+  vendor        String?
+  licenseKey    String?
+  seatsTotal    Int?
+  seatsUsed     Int?     @default(0)
+  expiresAt     DateTime?
+  assetId       String?
+  asset         Asset?   @relation(fields: [assetId], references: [id])
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  rating     Int      // 1..5
+  comment    String?
+  ticketId   String   @unique
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  givenById  String
+  givenBy    User     @relation(fields: [givenById], references: [id])
+}
+
+model WorkLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  date       DateTime // day of work
+  itUserId   String
+  itUser     User     @relation(fields: [itUserId], references: [id])
+  summary    String
+  hours      Float    @default(0)
+  ticketId   String?
+  ticket     Ticket?  @relation(fields: [ticketId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  action     String
+  entity     String
+  entityId   String?
+  metadata   Json?
+}
