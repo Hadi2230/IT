@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Nav } from "@/components/Nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="min-h-dvh flex flex-col">
+          <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+              <div className="font-medium">ITSM</div>
+              <Nav />
+            </div>
+          </header>
+          <main className="flex-1 max-w-6xl mx-auto px-4 py-6">
+            {children}
+          </main>
+          <footer className="border-t py-4 text-center text-xs opacity-60">© {new Date().getFullYear()} IT Helpdesk</footer>
+        </div>
       </body>
     </html>
   );
