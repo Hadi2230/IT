@@ -5,6 +5,13 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TicketsModule } from './tickets/tickets.module';
+import { MessagesModule } from './messages/messages.module';
+import { AttachmentsModule } from './attachments/attachments.module';
+import { AssetsModule } from './assets/assets.module';
+import { FeedbackModule } from './feedback/feedback.module';
+import { WorklogsModule } from './worklogs/worklogs.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -12,6 +19,13 @@ import { AppService } from './app.service';
     PrismaModule,
     AuthModule,
     UsersModule,
+    TicketsModule,
+    MessagesModule,
+    AttachmentsModule,
+    AssetsModule,
+    FeedbackModule,
+    WorklogsModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
