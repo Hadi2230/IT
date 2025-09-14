@@ -47,6 +47,8 @@ model User {
   tasks         WorkLog[]
   auditLogs     AuditLog[]
   feedbacksGiven Feedback[]
+  remoteSessionsRequested RemoteSession[] @relation("RemoteSessionRequester")
+  remoteSessionsAsAgent    RemoteSession[] @relation("RemoteSessionAgent")
 }
 
 model Ticket {
@@ -66,6 +68,7 @@ model Ticket {
   attachments   Attachment[]
   feedback      Feedback?
   workLogs      WorkLog[]
+  remoteSessions RemoteSession[]
 }
 
 model Message {
@@ -177,4 +180,28 @@ model AuditLog {
   entity     String
   entityId   String?
   metadata   Json?
+}
+
+enum RemoteSessionStatus {
+  PENDING
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+model RemoteSession {
+  id           String               @id @default(cuid())
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  ticketId     String
+  ticket       Ticket               @relation(fields: [ticketId], references: [id])
+  requesterId  String
+  requester    User                 @relation("RemoteSessionRequester", fields: [requesterId], references: [id])
+  agentId      String?
+  agent        User?                @relation("RemoteSessionAgent", fields: [agentId], references: [id])
+  code         String               @unique
+  status       RemoteSessionStatus  @default(PENDING)
+  expiresAt    DateTime?
+  endedAt      DateTime?
+  metadata     Json?
 }

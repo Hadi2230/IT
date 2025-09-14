@@ -14,6 +14,7 @@ import { WorklogsModule } from './worklogs/worklogs.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { ServiceLogsModule } from './service-logs/service-logs.module';
 import { SoftwareLicensesModule } from './software-licenses/software-licenses.module';
+import { RemoteSupportModule } from './remote-support/remote-support.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SoftwareLicensesModule } from './software-licenses/software-licenses.mo
     AuditLogsModule,
     ServiceLogsModule,
     SoftwareLicensesModule,
+    RemoteSupportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
