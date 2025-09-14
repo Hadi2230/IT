@@ -12,6 +12,8 @@ import { AssetsModule } from './assets/assets.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { WorklogsModule } from './worklogs/worklogs.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { ServiceLogsModule } from './service-logs/service-logs.module';
+import { SoftwareLicensesModule } from './software-licenses/software-licenses.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
     FeedbackModule,
     WorklogsModule,
     AuditLogsModule,
+    ServiceLogsModule,
+    SoftwareLicensesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
