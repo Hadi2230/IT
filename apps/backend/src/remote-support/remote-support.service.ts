@@ -15,33 +15,38 @@ function generateSessionCode(): string {
 export class RemoteSupportService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createSession(ticketId: string, requesterId: string, ttlMinutes = 60) {
-    const code = generateSessionCode();
-    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+  async createSession(ticketId: string, requesterId: string, dto: { expiresInMinutes?: number }) {
+    const minutes = dto.expiresInMinutes ?? 60;
+    const expiresAt = new Date(Date.now() + minutes * 60 * 1000);
     return this.prisma.remoteSession.create({
       data: {
         ticketId,
         requesterId,
-        code,
+        code: generateSessionCode(),
         expiresAt,
+        status: $Enums.RemoteSessionStatus.PENDING,
       },
     });
+  }
+
+  async getById(id: string) {
+    return this.prisma.remoteSession.findUnique({ where: { id } });
   }
 
   async getByCode(code: string) {
     return this.prisma.remoteSession.findUnique({ where: { code } });
   }
 
-  async activate(code: string, agentId: string) {
+  async claimAsAgent(id: string, agentId: string) {
     return this.prisma.remoteSession.update({
-      where: { code },
-      data: { status: $Enums.RemoteSessionStatus.ACTIVE, agentId },
+      where: { id },
+      data: { agentId, status: $Enums.RemoteSessionStatus.ACTIVE },
     });
   }
 
-  async end(code: string) {
+  async endSession(id: string) {
     return this.prisma.remoteSession.update({
-      where: { code },
+      where: { id },
       data: { status: $Enums.RemoteSessionStatus.ENDED, endedAt: new Date() },
     });
   }
