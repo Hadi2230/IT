@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { RolesGuard } from './utils/roles.guard';
 import { TicketsModule } from './tickets/tickets.module';
 import { MessagesModule } from './messages/messages.module';
 import { AttachmentsModule } from './attachments/attachments.module';
@@ -37,6 +39,9 @@ import { join } from 'node:path';
     RemoteSupportModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
 })
 export class AppModule {}
