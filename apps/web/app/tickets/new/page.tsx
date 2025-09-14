@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { fetchJson, getCurrentUser } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Protected } from "@/components/Auth";
+import { useToast } from "@/components/Toast";
 
 export default function NewTicketPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function NewTicketPage() {
   const [priority, setPriority] = useState("MEDIUM");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,9 +32,12 @@ export default function NewTicketPage() {
           requesterId: current?.id,
         },
       });
+      toast.push({ type: "success", message: "Ticket created" });
       router.replace(`/tickets/${res.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create");
+      const msg = err instanceof Error ? err.message : "Failed to create";
+      setError(msg);
+      toast.push({ type: "error", message: msg });
     } finally {
       setSubmitting(false);
     }

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { fetchJson } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 export default function NewLicensePage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function NewLicensePage() {
   const [assetId, setAssetId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -33,9 +35,12 @@ export default function NewLicensePage() {
           assetId: assetId || undefined,
         },
       });
+      toast.push({ type: "success", message: "License created" });
       router.replace("/licenses");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create");
+      const msg = err instanceof Error ? err.message : "Failed to create";
+      setError(msg);
+      toast.push({ type: "error", message: msg });
     } finally {
       setSubmitting(false);
     }

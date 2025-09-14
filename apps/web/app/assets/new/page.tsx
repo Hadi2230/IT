@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { fetchJson } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 export default function NewAssetPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function NewAssetPage() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -22,9 +24,12 @@ export default function NewAssetPage() {
     setError(null);
     try {
       const res = await fetchJson<{ id: string }>("/assets", { method: "POST", body: { tag, type, model, serialNumber, status, location, notes } });
+      toast.push({ type: "success", message: "Asset created" });
       router.replace(`/assets/${res.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create");
+      const msg = err instanceof Error ? err.message : "Failed to create";
+      setError(msg);
+      toast.push({ type: "error", message: msg });
     } finally {
       setSubmitting(false);
     }
