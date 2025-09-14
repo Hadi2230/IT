@@ -1,0 +1,20 @@
+{
+  "name": "itsm-enterprise",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Enterprise-grade ITSM platform (tickets, assets, chat, RBAC, reports)",
+  "license": "MIT",
+  "packageManager": "pnpm@10.11.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "start": "pnpm -r start",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "postinstall": "pnpm -r --workspace-concurrency=1 postinstall || true"
+  }
+}
