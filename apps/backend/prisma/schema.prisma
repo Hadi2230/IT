@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = env("DATABASE_PROVIDER")
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -46,6 +46,7 @@ model User {
   assets        AssetAssignment[]
   tasks         WorkLog[]
   auditLogs     AuditLog[]
+  feedbacksGiven Feedback[]
 }
 
 model Ticket {
@@ -64,6 +65,7 @@ model Ticket {
   messages      Message[]
   attachments   Attachment[]
   feedback      Feedback?
+  workLogs      WorkLog[]
 }
 
 model Message {
