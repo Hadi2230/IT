@@ -1,0 +1,1 @@
+node_modules\n.pnp.cjs\n.pnpm-store\n.env\n.env.*\ndist\ncoverage\n.prisma\n.next\n.DS_Store\n.idea\n.vscode\n**/.turbo\n**/.next\n**/build\n**/dist\n**/.env.local\n**/.env*\n**/node_modules\n**/.vercel\n**/.cache\n**/.nx\n**/coverage\n**/*.log\n
