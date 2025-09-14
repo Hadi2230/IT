@@ -42,6 +42,19 @@ export class RemoteSupportController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('remote-sessions/code/:code/claim')
+  async claimByCode(@Param('code') code: string, @Req() req: any): Promise<ConnectTokenResponseDto> {
+    const auth = (req.headers?.authorization ?? '') as string;
+    const agentId = (this.jwt.decode(auth.split(' ')[1] ?? '') as any)?.sub as string;
+    const session = await this.service.getByCode(code);
+    if (!session) throw new Error('Session not found');
+    await this.service.claimAsAgent(session.id, agentId);
+    const expiresInSeconds = 60 * 10;
+    const token = await this.jwt.signAsync({ sid: session.id, role: RemoteSocketRole.AGENT }, { expiresIn: expiresInSeconds });
+    return { token, expiresInSeconds };
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('remote-sessions/:id/end')
   async end(@Param('id') id: string) {
     return this.service.endSession(id);
