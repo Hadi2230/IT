@@ -15,11 +15,14 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { ServiceLogsModule } from './service-logs/service-logs.module';
 import { SoftwareLicensesModule } from './software-licenses/software-licenses.module';
 import { RemoteSupportModule } from './remote-support/remote-support.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'node:path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: [`.env`, `.env.local`] }),
     PrismaModule,
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     AuthModule,
     UsersModule,
     TicketsModule,

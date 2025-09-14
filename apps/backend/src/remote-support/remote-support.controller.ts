@@ -49,13 +49,14 @@ export class RemoteSupportController {
 
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RemoteSupportService } from './remote-support.service';
+import { CreateRemoteSessionDto } from './remote-support.dtos';
 
 @Controller('remote-sessions')
 export class RemoteSupportController {
   constructor(private readonly service: RemoteSupportService) {}
 
   @Post()
-  async create(@Body() dto: { ticketId: string; requesterId: string; ttlMinutes?: number }) {
+  async create(@Body() dto: CreateRemoteSessionDto) {
     return this.service.createSession(dto.ticketId, dto.requesterId, dto.ttlMinutes ?? 60);
   }
 

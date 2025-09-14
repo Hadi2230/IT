@@ -1,3 +1,21 @@
+import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+
+export class CreateRemoteSessionDto {
+  @IsString()
+  @IsNotEmpty()
+  ticketId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  requesterId!: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(5)
+  @Max(240)
+  ttlMinutes?: number;
+}
+
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class CreateRemoteSessionDto {
