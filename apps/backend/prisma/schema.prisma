@@ -110,6 +110,7 @@ model Asset {
   assignments  AssetAssignment[]
   serviceLogs  ServiceLog[]
   licenses     SoftwareLicense[]
+  repairs      AssetRepair[]
 }
 
 model AssetAssignment {
@@ -132,6 +133,50 @@ model ServiceLog {
   description String
   performedBy String   // IT agent id or name
   cost        Float?
+}
+
+enum RepairStatus {
+  OPEN
+  COMPLETED
+}
+
+model AssetRepair {
+  id               String        @id @default(cuid())
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  assetId          String
+  asset            Asset         @relation(fields: [assetId], references: [id])
+  status           RepairStatus  @default(OPEN)
+  providerName     String
+  contact          String?
+  startedAt        DateTime      @default(now())
+  expectedReturnAt DateTime?
+  returnedAt       DateTime?
+  cost             Float?
+  invoiceNo        String?
+  description      String?
+  notes            String?
+}
+
+enum SecretKind {
+  COMPANY_LINK
+  DEVICE_CREDENTIAL
+}
+
+model VaultSecret {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  kind         SecretKind
+  name         String
+  url          String?
+  username     String?
+  passwordEnc  Bytes
+  iv           Bytes
+  assetId      String?
+  asset        Asset?     @relation(fields: [assetId], references: [id])
+  notes        String?
+  tags         Json?
 }
 
 model SoftwareLicense {
