@@ -57,10 +57,10 @@ export default function TicketsPage() {
       {error ? <div className="text-red-600 text-sm">{error}</div> : null}
       <div className="grid gap-3">
         {slice.map((t) => (
-          <a key={t.id} href={`/tickets/${t.id}`} className="rounded-md border p-4 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+          <Link key={t.id} href={`/tickets/${t.id}`} className="rounded-md border p-4 hover:bg-neutral-50 dark:hover:bg-neutral-900">
             <div className="font-medium">{t.title}</div>
             <div className="text-xs opacity-70">{t.status} · {t.priority} · {new Date(t.createdAt).toLocaleString()}</div>
-          </a>
+          </Link>
         ))}
         {!loading && filtered.length === 0 ? <div className="text-sm opacity-70">No tickets match filters.</div> : null}
       </div>

@@ -52,10 +52,10 @@ export default function AssetsPage() {
       {error ? <div className="text-red-600 text-sm">{error}</div> : null}
       <div className="grid gap-3">
         {slice.map((a) => (
-          <a key={a.id} href={`/assets/${a.id}`} className="rounded-md border p-4 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+          <Link key={a.id} href={`/assets/${a.id}`} className="rounded-md border p-4 hover:bg-neutral-50 dark:hover:bg-neutral-900">
             <div className="font-medium">{a.tag} · {a.type}</div>
             <div className="text-xs opacity-70">{a.model || "-"} · {a.status} · {new Date(a.createdAt).toLocaleString()}</div>
-          </a>
+          </Link>
         ))}
         {!loading && filtered.length === 0 ? <div className="text-sm opacity-70">No assets match filters.</div> : null}
       </div>
