@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Remote Support - Client</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 24px; }
+      input, button { padding: 8px 12px; margin-right: 8px; }
+      video { width: 480px; height: 320px; background: #111; }
+      .row { margin: 12px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Remote Client</h1>
+    <div class="row">
+      <input id="code" placeholder="Session code" />
+      <button id="start">Start</button>
+      <span id="status"></span>
+    </div>
+    <div class="row">
+      <video id="preview" autoplay muted playsinline></video>
+    </div>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+      const status = (t) => document.getElementById('status').textContent = t;
+      const socket = io('/remote');
+      let pc;
+      document.getElementById('start').onclick = async () => {
+        const code = document.getElementById('code').value.trim();
+        socket.emit('join', { code, role: 'client' });
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        document.getElementById('preview').srcObject = stream;
+        pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        for (const track of stream.getTracks()) pc.addTrack(track, stream);
+        pc.onicecandidate = (e) => { if (e.candidate) socket.emit('signal', { code, payload: { candidate: e.candidate } }); };
+        socket.on('signal', async (msg) => {
+          const { payload } = msg;
+          if (payload.answer) {
+            await pc.setRemoteDescription(payload.answer);
+            status('Connected');
+          } else if (payload.candidate) {
+            try { await pc.addIceCandidate(payload.candidate); } catch {}
+          }
+        });
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        socket.emit('signal', { code, payload: { offer } });
+        status('Waiting for agent...');
+      };
+    </script>
+  </body>
+  </html>
+
