@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.env*
+.prisma
+coverage
+dist
+uploads
+**/.git
+**/.cache
+**/.next
