@@ -15,6 +15,7 @@ export class AuthService {
     if (!user || !user.isActive) {
       throw new UnauthorizedException('Invalid credentials');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
     return user;
@@ -23,7 +24,11 @@ export class AuthService {
   async login(userId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new UnauthorizedException('User not found');
-    const payload = { sub: user.id, role: user.role, email: user.email };
+    const payload = {
+      sub: user.id,
+      role: user.role,
+      email: user.email,
+    } as const;
     const token = await this.jwtService.signAsync(payload);
     return {
       accessToken: token,

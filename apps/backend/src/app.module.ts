@@ -12,6 +12,10 @@ import { AssetsModule } from './assets/assets.module';
 import { WorklogsModule } from './worklogs/worklogs.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AuditModule } from './audit/audit.module';
+import { AccessModule } from './utils/access.module';
+import { RealtimeModule } from './realtime/realtime.module';
+import { ReportsModule } from './reports/reports.module';
+import { RemoteModule } from './remote/remote.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -36,6 +40,10 @@ import { AppService } from './app.service';
     WorklogsModule,
     FeedbackModule,
     AuditModule,
+    AccessModule,
+    RealtimeModule,
+    ReportsModule,
+    RemoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

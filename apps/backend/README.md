@@ -48,6 +48,7 @@ pnpm -C apps/backend test:e2e     # e2e
 - Messages
   - GET /tickets/:ticketId/messages (Bearer)
   - POST /tickets/:ticketId/messages (Bearer)
+  - Realtime: Socket.io room `ticket:<id>` emits `message:new`
 - Attachments
   - POST /attachments/upload (form-data: file, ticketId?, messageId?) (Bearer)
   - Static files served at /uploads/<storageKey>
@@ -63,9 +64,16 @@ pnpm -C apps/backend test:e2e     # e2e
   - GET /worklogs?itUserId=&ticketId=
 - Feedback (Requester only)
   - POST /tickets/:ticketId/feedback (Bearer)
+- Remote Sessions
+  - GET /tickets/:ticketId/remote (Bearer; requester or IT/Admin)
+  - POST /tickets/:ticketId/remote (ADMIN/IT_AGENT) body: { link, note? }
+- Reports (ADMIN only)
+  - GET /reports/tickets/status
+  - GET /reports/tickets/priority
 
 ## Notes
 
 - Change JWT_SECRET in production.
 - Consider moving to Postgres in production; update DATABASE_URL.
 - Uploaded files saved to ./uploads.
+- Access control: Employees can only access their own tickets/messages/attachments; IT/ADMIN have full access.

@@ -66,6 +66,7 @@ model Ticket {
   attachments   Attachment[]
   feedback      Feedback?
   workLogs      WorkLog[]
+  remote        RemoteSession[]
 }
 
 model Message {
@@ -177,4 +178,14 @@ model AuditLog {
   entity     String
   entityId   String?
   metadata   Json?
+}
+
+model RemoteSession {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  link      String   // e.g. RustDesk/AnyDesk/WebRTC join link or code
+  note      String?
+  createdBy String
 }

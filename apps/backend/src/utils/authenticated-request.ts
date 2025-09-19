@@ -8,4 +8,3 @@ export interface AuthenticatedUserPayload {
 }
 
 export type AuthenticatedRequest = Request & { user: AuthenticatedUserPayload };
-

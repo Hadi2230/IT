@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { JwtAuthGuard } from '../utils/jwt-auth.guard';
 import { Roles } from '../utils/roles.decorator';
 import { RolesGuard } from '../utils/roles.guard';
 import { AuditService } from '../audit/audit.service';
 import type { AuthenticatedRequest } from '../utils/authenticated-request';
+import { AccessService } from '../utils/access.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('tickets')
@@ -12,6 +23,7 @@ export class TicketsController {
   constructor(
     private readonly tickets: TicketsService,
     private readonly audit: AuditService,
+    private readonly access: AccessService,
   ) {}
 
   @Post()
@@ -39,7 +51,8 @@ export class TicketsController {
   }
 
   @Get(':id')
-  async get(@Param('id') id: string) {
+  async get(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    await this.access.assertCanReadTicket(req.user, id);
     return this.tickets.findById(id);
   }
 
@@ -65,7 +78,12 @@ export class TicketsController {
         | 'RESOLVED'
         | 'CLOSED'
         | undefined,
-      priority: q.priority as 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | undefined,
+      priority: q.priority as
+        | 'CRITICAL'
+        | 'HIGH'
+        | 'MEDIUM'
+        | 'LOW'
+        | undefined,
       assigneeId: q.assigneeId,
       requesterId: role === 'EMPLOYEE' ? req.user.userId : q.requesterId,
       q: q.q,
@@ -75,6 +93,7 @@ export class TicketsController {
 
   @Patch(':id')
   async update(
+    @Req() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body()
     body: Partial<{
@@ -84,6 +103,7 @@ export class TicketsController {
       priority: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
     }>,
   ) {
+    await this.access.assertCanUpdateTicket(req.user, id);
     return this.tickets.update(id, body);
   }
 

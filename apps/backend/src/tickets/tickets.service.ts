@@ -33,14 +33,24 @@ export class TicketsService {
   }
 
   async list(filters: {
-    status?: 'OPEN' | 'IN_PROGRESS' | 'PENDING_CUSTOMER' | 'RESOLVED' | 'CLOSED';
+    status?:
+      | 'OPEN'
+      | 'IN_PROGRESS'
+      | 'PENDING_CUSTOMER'
+      | 'RESOLVED'
+      | 'CLOSED';
     priority?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
     assigneeId?: string;
     requesterId?: string;
     q?: string;
   }) {
     const where: {
-      status?: 'OPEN' | 'IN_PROGRESS' | 'PENDING_CUSTOMER' | 'RESOLVED' | 'CLOSED';
+      status?:
+        | 'OPEN'
+        | 'IN_PROGRESS'
+        | 'PENDING_CUSTOMER'
+        | 'RESOLVED'
+        | 'CLOSED';
       priority?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
       assigneeId?: string;
       requesterId?: string;

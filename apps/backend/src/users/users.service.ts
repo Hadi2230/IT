@@ -12,7 +12,11 @@ export class UsersService {
     password: string;
     role?: 'ADMIN' | 'IT_AGENT' | 'EMPLOYEE';
   }) {
-    const passwordHash = await bcrypt.hash(data.password, 10);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const passwordHash = (await bcrypt.hash(
+      data.password,
+      10,
+    )) as unknown as string;
     return this.prisma.user.create({
       data: {
         fullName: data.fullName,

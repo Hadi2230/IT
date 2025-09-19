@@ -26,7 +26,13 @@ export class WorklogsController {
 
   @Get()
   @Roles('ADMIN', 'IT_AGENT')
-  list(@Query() q: any) {
+  list(
+    @Query()
+    q: {
+      itUserId?: string;
+      ticketId?: string;
+    },
+  ) {
     return this.worklogs.list({ itUserId: q.itUserId, ticketId: q.ticketId });
   }
 }
